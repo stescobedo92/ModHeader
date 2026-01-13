@@ -1,7 +1,9 @@
 # ModHeader
 
 [![CI/CD Pipeline](https://github.com/stescobedo92/ModHeader/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/stescobedo92/ModHeader/actions/workflows/ci-cd.yml)
+[![npm version](https://badge.fury.io/js/modheader.svg)](https://www.npmjs.com/package/modheader)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Node.js Version](https://img.shields.io/node/v/modheader.svg)](https://nodejs.org)
 
 ## 📖 Description
 
@@ -32,7 +34,54 @@
 
 ## 🔧 Installation
 
-### Local Setup
+### As an npm Package
+
+```bash
+npm install modheader
+```
+
+### Programmatic Usage
+
+You can use ModHeader as a library in your Node.js application:
+
+```javascript
+const express = require('express');
+const { createProxyMiddleware } = require('http-proxy-middleware');
+const HeaderManager = require('modheader/src/headerManager');
+const apiRouter = require('modheader/src/api');
+
+const app = express();
+const headerManager = new HeaderManager();
+
+// Add your custom header rules
+headerManager.addRule({
+  action: 'add',
+  type: 'request',
+  headers: {
+    'Authorization': 'Bearer YOUR_TOKEN'
+  }
+});
+
+// Use the API routes
+app.use(express.json());
+app.use('/api', apiRouter(headerManager));
+
+// Setup your proxy with header modifications
+app.use('/', createProxyMiddleware({
+  target: 'http://your-backend:3000',
+  changeOrigin: true,
+  onProxyReq: (proxyReq, req) => {
+    const modifications = headerManager.applyRequestHeaders(req.headers);
+    Object.entries(modifications.add).forEach(([key, value]) => {
+      proxyReq.setHeader(key, value);
+    });
+  }
+}));
+
+app.listen(8080);
+```
+
+### Local Setup (Development)
 
 ```bash
 # Clone the repository

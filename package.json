@@ -10,7 +10,8 @@
     "test:unit": "jest --testPathPattern=tests/unit",
     "test:integration": "jest --testPathPattern=tests/integration",
     "lint": "eslint src tests",
-    "lint:fix": "eslint src tests --fix"
+    "lint:fix": "eslint src tests --fix",
+    "prepublishOnly": "npm test && npm run lint"
   },
   "keywords": [
     "http",
@@ -18,10 +19,27 @@
     "headers",
     "middleware",
     "testing",
-    "authentication"
+    "authentication",
+    "header-manipulation",
+    "http-proxy",
+    "debugging",
+    "development-tools"
   ],
   "author": "stescobedo92",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/stescobedo92/ModHeader.git"
+  },
+  "bugs": {
+    "url": "https://github.com/stescobedo92/ModHeader/issues"
+  },
+  "homepage": "https://github.com/stescobedo92/ModHeader#readme",
+  "files": [
+    "src/",
+    "README.md",
+    "LICENSE"
+  ],
   "dependencies": {
     "express": "^4.18.2",
     "http-proxy-middleware": "^2.0.6",
