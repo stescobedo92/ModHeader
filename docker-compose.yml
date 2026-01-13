@@ -1,0 +1,39 @@
+# ModHeader Proxy Service
+version: '3.8'
+
+services:
+  modheader:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: modheader-proxy
+    ports:
+      - "${PORT:-8080}:8080"
+    environment:
+      - PORT=8080
+      - HOST=0.0.0.0
+      - TARGET_URL=${TARGET_URL:-http://backend:3000}
+      - LOG_LEVEL=${LOG_LEVEL:-info}
+    restart: unless-stopped
+    networks:
+      - modheader-network
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 5s
+
+  # Example backend service (for testing)
+  backend:
+    image: node:18-alpine
+    container_name: modheader-backend
+    command: sh -c "echo 'const http = require(\"http\"); http.createServer((req, res) => { res.writeHead(200, {\"Content-Type\": \"application/json\"}); res.end(JSON.stringify({message: \"Backend service\", headers: req.headers})); }).listen(3000, () => console.log(\"Backend running on port 3000\"));' > server.js && node server.js"
+    networks:
+      - modheader-network
+    expose:
+      - "3000"
+
+networks:
+  modheader-network:
+    driver: bridge

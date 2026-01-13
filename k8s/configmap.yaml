@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: modheader-config
+  namespace: default
+data:
+  PORT: "8080"
+  HOST: "0.0.0.0"
+  TARGET_URL: "http://backend-service:3000"
+  LOG_LEVEL: "info"
