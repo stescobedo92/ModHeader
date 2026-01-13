@@ -1,7 +1,9 @@
 # ModHeader
 
 [![CI/CD Pipeline](https://github.com/stescobedo92/ModHeader/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/stescobedo92/ModHeader/actions/workflows/ci-cd.yml)
+[![npm version](https://badge.fury.io/js/modheader.svg)](https://www.npmjs.com/package/modheader)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Node.js Version](https://img.shields.io/node/v/modheader.svg)](https://nodejs.org)
 
 ## 📖 Description
 
@@ -32,7 +34,125 @@
 
 ## 🔧 Installation
 
-### Local Setup
+### As an npm Package
+
+```bash
+npm install modheader
+```
+
+### Programmatic Usage
+
+ModHeader can be used as a standalone server or you can integrate its components into your application:
+
+**Option 1: Using as a Standalone Server**
+
+```bash
+npm install modheader
+
+# Set environment variables
+export PORT=8080
+export TARGET_URL=http://your-backend:3000
+
+# Run the server
+npx modheader
+```
+
+Or use in your package.json scripts:
+```json
+{
+  "scripts": {
+    "proxy": "PORT=8080 TARGET_URL=http://localhost:3000 node node_modules/modheader/src/index.js"
+  }
+}
+```
+
+**Option 2: Using HeaderManager in Your App**
+
+Import and use the HeaderManager class to handle header modifications:
+
+```javascript
+const express = require('express');
+const { createProxyMiddleware } = require('http-proxy-middleware');
+// Import HeaderManager from the package
+const HeaderManager = require('modheader/src/headerManager');
+
+const app = express();
+const headerManager = new HeaderManager();
+
+// Add your custom header rules
+headerManager.addRule({
+  action: 'add',
+  type: 'request',
+  headers: {
+    'Authorization': 'Bearer YOUR_TOKEN',
+    'X-Custom-Header': 'custom-value'
+  }
+});
+
+// You can also modify or remove headers
+headerManager.addRule({
+  action: 'remove',
+  type: 'request',
+  headers: ['cookie', 'x-old-header']
+});
+
+// Setup your proxy with header modifications
+app.use('/', createProxyMiddleware({
+  target: 'http://your-backend:3000',
+  changeOrigin: true,
+  onProxyReq: (proxyReq, req) => {
+    const modifications = headerManager.applyRequestHeaders(req.headers);
+    
+    // Apply additions
+    Object.entries(modifications.add).forEach(([key, value]) => {
+      proxyReq.setHeader(key, value);
+    });
+    
+    // Apply modifications
+    Object.entries(modifications.modify).forEach(([key, value]) => {
+      proxyReq.setHeader(key, value);
+    });
+    
+    // Apply removals
+    modifications.remove.forEach(key => {
+      proxyReq.removeHeader(key);
+    });
+  }
+}));
+
+app.listen(8080, () => {
+  console.log('Proxy server with custom header rules running on port 8080');
+});
+```
+
+**Option 3: Using the Complete API Router**
+
+You can also integrate the full API routing system:
+
+```javascript
+const express = require('express');
+const HeaderManager = require('modheader/src/headerManager');
+const createApiRouter = require('modheader/src/api');
+
+const app = express();
+const headerManager = new HeaderManager();
+
+app.use(express.json());
+app.use('/api', createApiRouter(headerManager));
+
+// Now you can manage rules via REST API:
+// POST   /api/rules      - Create new rule
+// GET    /api/rules      - List all rules
+// GET    /api/rules/:id  - Get specific rule
+// PUT    /api/rules/:id  - Update rule
+// DELETE /api/rules/:id  - Delete rule
+
+app.listen(3000, () => {
+  console.log('Header management API running on port 3000');
+});
+```
+
+### Local Setup (Development)
 
 ```bash
 # Clone the repository
