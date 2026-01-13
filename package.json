@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "HTTP proxy server to add, modify and remove HTTP request/response headers on the fly",
   "main": "src/index.js",
+  "bin": {
+    "modheader": "src/index.js"
+  },
   "scripts": {
     "start": "node src/index.js",
     "dev": "nodemon src/index.js",
