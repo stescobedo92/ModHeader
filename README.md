@@ -3,104 +3,102 @@
 [![CI/CD Pipeline](https://github.com/stescobedo92/ModHeader/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/stescobedo92/ModHeader/actions/workflows/ci-cd.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-## 📖 Descripción
+## 📖 Description
 
-ModHeader es un servidor proxy HTTP que permite añadir, modificar y eliminar cabeceras de solicitudes y respuestas HTTP sobre la marcha. Esta herramienta es vital para:
+**ModHeader** is a high-performance HTTP proxy server designed to add, modify, and delete HTTP request and response headers on the fly. This tool is essential for:
 
-- **Probar autenticación basada en tokens**: Añade headers de Authorization sin modificar el código del backend
-- **Bypass de caché**: Modifica headers de cache-control para probar diferentes escenarios
-- **Simular diferentes tipos de clientes**: Cambia el User-Agent para simular navegadores, bots, o dispositivos móviles
-- **Debugging y testing**: Inyecta headers personalizados para rastreo y análisis
+* **Testing Token-Based Authentication**: Inject `Authorization` headers without modifying backend code.
+* **Cache Bypassing**: Manipulate `cache-control` headers to test different caching scenarios.
+* **Client Simulation**: Spoof the `User-Agent` to simulate various browsers, bots, or mobile devices.
+* **Debugging & Testing**: Inject custom headers for advanced tracing and logging analysis.
 
-## 🚀 Características
+## 🚀 Features
 
-- ✅ Gestión dinámica de headers mediante API REST
-- ✅ Soporte para headers de request y response
-- ✅ Reglas configurables (add, modify, remove)
-- ✅ Activación/desactivación de reglas sin eliminarlas
-- ✅ Proxy transparente con modificación de headers en tiempo real
-- ✅ API para gestión de reglas
-- ✅ Health checks integrados
-- ✅ Dockerizado y listo para Kubernetes
-- ✅ Tests unitarios e integración completos
+* ✅ **Dynamic Management**: Real-time header manipulation via REST API.
+* ✅ **Request/Response Support**: Full control over both inbound and outbound traffic.
+* ✅ **Configurable Rules**: Support for `add`, `modify`, and `remove` actions.
+* ✅ **Toggleable Rules**: Enable or disable rules instantly without deleting them.
+* ✅ **Transparent Proxying**: Seamless real-time header modification.
+* ✅ **Integrated Health Checks**: Built-in monitoring endpoints.
+* ✅ **Cloud Native**: Fully Dockerized and Kubernetes-ready.
+* ✅ **Reliability**: Comprehensive unit and integration test coverage.
 
-## 📋 Prerequisitos
+## 📋 Prerequisites
 
-- Node.js >= 16.0.0
-- npm o yarn
-- Docker (opcional, para deployment)
-- Kubernetes (opcional, para deployment en cluster)
+* **Node.js** >= 16.0.0
+* **npm** or **yarn**
+* **Docker** (optional, for containerized deployment)
+* **Kubernetes** (optional, for cluster deployment)
 
-## 🔧 Instalación
+## 🔧 Installation
 
-### Instalación Local
+### Local Setup
 
 ```bash
-# Clonar el repositorio
-git clone https://github.com/stescobedo92/ModHeader.git
+# Clone the repository
+git clone [https://github.com/stescobedo92/ModHeader.git](https://github.com/stescobedo92/ModHeader.git)
 cd ModHeader
 
-# Instalar dependencias
+# Install dependencies
 npm install
 
-# Copiar el archivo de configuración de ejemplo
+# Setup environment configuration
 cp .env.example .env
 
-# Editar .env con tu configuración
+# Edit .env with your specific configuration
 # PORT=8080
 # TARGET_URL=http://localhost:3000
 
-# Iniciar el servidor
+# Start the server
 npm start
 ```
 
-### Instalación con Docker
-
+## Docker Deployment
 ```bash
-# Construir la imagen
+# Build the image
 docker build -t modheader:latest .
 
-# Ejecutar el contenedor
+# Run the container
 docker run -p 8080:8080 -e TARGET_URL=http://your-backend:3000 modheader:latest
 ```
 
-### Instalación con Docker Compose
-
+## Docker compose
 ```bash
-# Iniciar todos los servicios
+# Spin up all services
 docker-compose up -d
 
-# Ver logs
+# View logs
 docker-compose logs -f
 
-# Detener servicios
+# Stop services
 docker-compose down
 ```
 
-### Deployment en Kubernetes
-
+## Kubernetes
 ```bash
-# Aplicar configuraciones
+# Apply configurations
 kubectl apply -f k8s/configmap.yaml
 kubectl apply -f k8s/deployment.yaml
 kubectl apply -f k8s/ingress.yaml
 
-# Verificar deployment
+# Verify deployment status
 kubectl get pods -l app=modheader
 kubectl get svc modheader-service
 ```
 
-## 📚 Uso
+## 📚 Usage
 
 ### API Endpoints
 
-#### Health Check
 ```bash
+Health Check
+
 GET http://localhost:8080/health
 ```
 
-Respuesta:
-```json
+### Response
+
+```bash
 {
   "status": "ok",
   "timestamp": "2024-01-13T12:00:00.000Z",
@@ -108,15 +106,16 @@ Respuesta:
 }
 ```
 
-#### Listar todas las reglas
 ```bash
+List All Rules
+
 GET http://localhost:8080/api/rules
 ```
 
-#### Crear una nueva regla
-
-**Añadir header de Authorization:**
 ```bash
+Create a New Rule
+Add Authorization Header:
+
 curl -X POST http://localhost:8080/api/rules \
   -H "Content-Type: application/json" \
   -d '{
@@ -128,8 +127,9 @@ curl -X POST http://localhost:8080/api/rules \
   }'
 ```
 
-**Modificar User-Agent:**
 ```bash
+Modify User-Agent:
+
 curl -X POST http://localhost:8080/api/rules \
   -H "Content-Type: application/json" \
   -d '{
@@ -141,8 +141,9 @@ curl -X POST http://localhost:8080/api/rules \
   }'
 ```
 
-**Eliminar cookies:**
 ```bash
+Remove Cookies:
+
 curl -X POST http://localhost:8080/api/rules \
   -H "Content-Type: application/json" \
   -d '{
@@ -152,22 +153,9 @@ curl -X POST http://localhost:8080/api/rules \
   }'
 ```
 
-**Añadir header de CORS en response:**
 ```bash
-curl -X POST http://localhost:8080/api/rules \
-  -H "Content-Type: application/json" \
-  -d '{
-    "action": "add",
-    "type": "response",
-    "headers": {
-      "Access-Control-Allow-Origin": "*",
-      "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE"
-    }
-  }'
-```
+Update a Rule
 
-#### Actualizar una regla
-```bash
 curl -X PUT http://localhost:8080/api/rules/{ruleId} \
   -H "Content-Type: application/json" \
   -d '{
@@ -175,155 +163,62 @@ curl -X PUT http://localhost:8080/api/rules/{ruleId} \
   }'
 ```
 
-#### Eliminar una regla
 ```bash
+Delete Rule
+
 curl -X DELETE http://localhost:8080/api/rules/{ruleId}
 ```
 
-#### Eliminar todas las reglas
-```bash
-curl -X DELETE http://localhost:8080/api/rules
-```
-
-### Tipos de Reglas
-
-#### Action Types
-- `add`: Añade nuevos headers
-- `modify`: Modifica headers existentes (solo si ya existen)
-- `remove`: Elimina headers
-
-#### Type (Scope)
-- `request`: Aplica solo a requests
-- `response`: Aplica solo a responses
-- `both`: Aplica a ambos
-
-### Ejemplos de Uso
-
-#### Ejemplo 1: Testing de autenticación JWT
-
-```bash
-# Crear regla para añadir token JWT
-curl -X POST http://localhost:8080/api/rules \
-  -H "Content-Type: application/json" \
-  -d '{
-    "action": "add",
-    "type": "request",
-    "headers": {
-      "Authorization": "Bearer your-jwt-token-here"
-    }
-  }'
-
-# Ahora todas las peticiones a través del proxy tendrán el header Authorization
-curl http://localhost:8080/api/protected-endpoint
-```
-
-#### Ejemplo 2: Bypass de caché
-
-```bash
-# Crear regla para modificar cache headers
-curl -X POST http://localhost:8080/api/rules \
-  -H "Content-Type: application/json" \
-  -d '{
-    "action": "add",
-    "type": "request",
-    "headers": {
-      "Cache-Control": "no-cache, no-store, must-revalidate",
-      "Pragma": "no-cache"
-    }
-  }'
-```
-
-#### Ejemplo 3: Simular diferentes User-Agents
-
-```bash
-# Simular un navegador móvil
-curl -X POST http://localhost:8080/api/rules \
-  -H "Content-Type: application/json" \
-  -d '{
-    "action": "modify",
-    "type": "request",
-    "headers": {
-      "user-agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 14_0 like Mac OS X)"
-    }
-  }'
-```
+---
 
 ## 🧪 Testing
 
 ```bash
-# Ejecutar todos los tests
+# Run all tests
 npm test
 
-# Ejecutar solo tests unitarios
+# Run unit tests only
 npm run test:unit
 
-# Ejecutar solo tests de integración
+# Run integration tests only
 npm run test:integration
 
-# Ver cobertura
+# Generate coverage report
 npm test -- --coverage
 ```
 
-## 🏗️ Arquitectura
+##🏗️ Architecture
 
-```
+```bash
 ┌─────────────┐      ┌──────────────┐      ┌─────────────┐
-│   Cliente   │─────▶│  ModHeader   │─────▶│   Backend   │
+│             │      │              │      │             │
+│   Client    │─────▶│  ModHeader   │─────▶│   Backend  │
 │             │      │    Proxy     │      │   Server    │
 └─────────────┘      └──────────────┘      └─────────────┘
                             │
-                            │ API REST
+                            │ REST API
                             ▼
                      ┌──────────────┐
+                     │              │
                      │    Header    │
-                     │   Manager    │
+                     │    Manager   │
                      └──────────────┘
 ```
 
-### Componentes
+---
 
-- **index.js**: Servidor principal con Express y proxy middleware
-- **headerManager.js**: Lógica de gestión de reglas de headers
-- **api.js**: Endpoints REST para CRUD de reglas
-- **tests/**: Tests unitarios e integración
+##🤝 Contributing
 
-## 🔒 Seguridad
+Contributions are welcome! To contribute:
 
-- Contenedor Docker ejecuta como usuario no-root
-- Health checks integrados
-- Validación de inputs en API
-- Sin almacenamiento de datos sensibles en logs
+* Fork the project.
+* Create your Feature Branch (git checkout -b feature/AmazingFeature).
+* Commit your changes (git commit -m 'Add some AmazingFeature').
+* Push to the branch (git push origin feature/AmazingFeature).
 
-## 📊 CI/CD
+Could you open a Pull Request?
 
-El proyecto incluye un pipeline completo de CI/CD con GitHub Actions:
+---
 
-- ✅ Tests en múltiples versiones de Node.js (16, 18, 20)
-- ✅ Linting y validación de código
-- ✅ Cobertura de código con Codecov
-- ✅ Build y push automático de imagen Docker
-- ✅ Deployment automático a Kubernetes
-
-## 🤝 Contribuciones
-
-Las contribuciones son bienvenidas! Por favor:
-
-1. Fork el proyecto
-2. Crea una rama para tu feature (`git checkout -b feature/AmazingFeature`)
-3. Commit tus cambios (`git commit -m 'Add some AmazingFeature'`)
-4. Push a la rama (`git push origin feature/AmazingFeature`)
-5. Abre un Pull Request
-
-## 📝 License
-
-Este proyecto está bajo la licencia MIT. Ver el archivo [LICENSE](LICENSE) para más detalles.
-
-## 👨‍💻 Autor
-
-**stescobedo92**
-
-## 🙏 Agradecimientos
-
-- Node.js community
-- Express.js framework
-- http-proxy-middleware library
+##📝 License
+Distributed under the MIT License. See LICENSE for more information.
