@@ -147,7 +147,7 @@ class HeaderManager {
    * @private
    */
   _generateId() {
-    return `rule_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    return `rule_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
   }
 }
 
