@@ -34,7 +34,7 @@ app.get('/health', (req, res) => {
 app.use('/', createProxyMiddleware({
   target: TARGET_URL,
   changeOrigin: true,
-  onProxyReq: (proxyReq, req, res) => {
+  onProxyReq: (proxyReq, req) => {
     // Apply header modifications to request
     const modifications = headerManager.applyRequestHeaders(req.headers);
     
@@ -59,7 +59,7 @@ app.use('/', createProxyMiddleware({
       removed: modifications.remove
     });
   },
-  onProxyRes: (proxyRes, req, res) => {
+  onProxyRes: (proxyRes, req) => {
     // Apply header modifications to response
     const modifications = headerManager.applyResponseHeaders(proxyRes.headers);
     

@@ -61,7 +61,7 @@ describe('Integration Tests - Full Proxy Flow', () => {
       proxyApp.use('/', createProxyMiddleware({
         target: `http://localhost:${backendPort}`,
         changeOrigin: true,
-        onProxyReq: (proxyReq, req, res) => {
+        onProxyReq: (proxyReq, req) => {
           const modifications = headerManager.applyRequestHeaders(req.headers);
 
           Object.entries(modifications.add).forEach(([key, value]) => {
@@ -76,7 +76,7 @@ describe('Integration Tests - Full Proxy Flow', () => {
             proxyReq.removeHeader(key);
           });
         },
-        onProxyRes: (proxyRes, req, res) => {
+        onProxyRes: (proxyRes) => {
           const modifications = headerManager.applyResponseHeaders(proxyRes.headers);
 
           Object.entries(modifications.add).forEach(([key, value]) => {
