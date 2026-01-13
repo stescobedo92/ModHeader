@@ -56,7 +56,7 @@ npm start
 ## Docker Deployment
 ```bash
 # Build the image
-docker build -t modheader:latest.
+docker build -t modheader:latest
 
 # Run the container
 docker run -p 8080:8080 -e TARGET_URL=http://your-backend:3000 modheader:latest
