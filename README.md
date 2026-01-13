@@ -42,13 +42,29 @@ npm install modheader
 
 ### Programmatic Usage
 
-You can use ModHeader as a library in your Node.js application:
+ModHeader can be used as a standalone server or integrated into your application:
+
+**Option 1: Using as a Standalone Server**
+
+Simply install and run with your configuration:
+
+```bash
+npm install modheader
+cd node_modules/modheader
+cp .env.example .env
+# Edit .env with your configuration
+node src/index.js
+```
+
+**Option 2: Integrating HeaderManager into Your App**
+
+You can use the HeaderManager class directly in your application:
 
 ```javascript
 const express = require('express');
 const { createProxyMiddleware } = require('http-proxy-middleware');
+// Import from installed package
 const HeaderManager = require('modheader/src/headerManager');
-const apiRouter = require('modheader/src/api');
 
 const app = express();
 const headerManager = new HeaderManager();
@@ -62,23 +78,29 @@ headerManager.addRule({
   }
 });
 
-// Use the API routes
-app.use(express.json());
-app.use('/api', apiRouter(headerManager));
-
 // Setup your proxy with header modifications
 app.use('/', createProxyMiddleware({
   target: 'http://your-backend:3000',
   changeOrigin: true,
   onProxyReq: (proxyReq, req) => {
     const modifications = headerManager.applyRequestHeaders(req.headers);
+    
+    // Apply all modifications
     Object.entries(modifications.add).forEach(([key, value]) => {
       proxyReq.setHeader(key, value);
+    });
+    Object.entries(modifications.modify).forEach(([key, value]) => {
+      proxyReq.setHeader(key, value);
+    });
+    modifications.remove.forEach(key => {
+      proxyReq.removeHeader(key);
     });
   }
 }));
 
-app.listen(8080);
+app.listen(8080, () => {
+  console.log('Proxy server with ModHeader running on port 8080');
+});
 ```
 
 ### Local Setup (Development)
